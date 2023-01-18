@@ -23,13 +23,25 @@ varient_df <- data.frame(le_specs = c("o3", "no2", "no", "nh3", "so2", 'hno3', "
 ## espg codes given here https://epsg.io/
 
 varient_df <- varient_df[7:8,]
+# 
+# rc <- read.csv("mod_files/run/lotos-euros.rc", header = FALSE)
+# 
+# ## filter out the lines with !
+# rc <- filter(rc, !grepl("!", V1))
+# 
+# rc <- colsplit(rc$V1, ":", c("C1", "C2"))
 
-import_surf_concs <- function(path = 'mod_files/output', pattern = "_conc-sfc_", species,  output_crs = 4326, output_units = 'mass'){
+#sub_dirs <- filter(rc, grepl(".rc", C2) & grepl("/main.directory/", C2))
+
+
+
+import_surf_concs <- function(path = 'mod_files/output', pattern = "_conc-sfc_", write_out = TRUE, species,  output_crs = 4326, output_units = 'mass'){
   
-  path <- "output"
-  pattern = "_conc-sfc_"
-  species <- 'o3'
-  output_units <- 'mass'
+  # path <- "mod_files/output"
+  # pattern = "_conc-sfc_"
+  # species <- 'o3'
+  # output_units <- 'mass'
+  # output_crs = 4326
   
   files_p <- list.files(path, pattern, full.names = TRUE)
   files <- files_p[!grepl('metout', files_p)]
@@ -92,7 +104,7 @@ import_surf_concs <- function(path = 'mod_files/output', pattern = "_conc-sfc_",
       r1_out <- r1*var_info$units
     }
     
-    r1_out <- raster::projectRaster(r1_out, output_crs)
+    r1_out <- raster::projectRaster(r1_out, crs = output_crs)
     
     names(r1_out) <- d8_time
     
@@ -104,19 +116,30 @@ import_surf_concs <- function(path = 'mod_files/output', pattern = "_conc-sfc_",
    
 
   }
+  
+  if(write_out == TRUE){
+  
+    dir.create('bricks/concs', recursive = TRUE)
+    ## convert to a terra geospatial raster and use terra writeRaster function to preserve layer names
+    terra::writeRaster(terra::rast(brick(rstz)), filename=paste0("bricks/concs/", species, ".TIF"), overwrite = TRUE)
+    
+    #assign(s, s_rast)
+    
+    print(paste0("raster brick written to: bricks/concs/", species, ".TIF"))
+  }
 
   return(brick(rstz))
 }
 
 
-conc_in <- import_surf_concs(species = varient_df$le_specs[1])
+conc_in <- import_surf_concs(species = varient_df$le_specs[1], write_out = TRUE)
 
 
 
 meteo_spec <- c('temper', 'wspd_surf', 'wdir_surf')
 
 
-import_surf_meteo <- function(path = 'output', pattern = "_meteo_", variables = 'temper',  output_crs = 4326){
+import_surf_meteo <- function(path = 'output', pattern = "_meteo_", variable = 'temper',  output_crs = 4326){
   
   path <- "output"
   pattern = "_meteo_"
@@ -165,15 +188,15 @@ import_surf_meteo <- function(path = 'output', pattern = "_meteo_", variables = 
       d8_time <- paste0((lubridate::ymd(time_since) + lubridate::seconds(TIME)), " ", sprintf("%02d", seq(1:24)-1), ":00")
       d8 <- lubridate::ymd(lubridate::ymd(time_since) + lubridate::seconds(TIME))
       
-      var_dim <- NROW(dim(ncvar_get(lefile, species)))
+      var_dim <- NROW(dim(ncvar_get(lefile, variable)))
       
        lefile$var$wdir_surf$ndims
       if(var_dim == 4){
-        var_in <- t(brick(ncvar_get(lefile, species, start = c(1,1,1,1), count = c(n_x, n_y, 1, 24))))
+        var_in <- t(brick(ncvar_get(lefile, variable, start = c(1,1,1,1), count = c(n_x, n_y, 1, 24))))
       }
       
       if(var_dim == 3){
-        var_in <- t(brick(ncvar_get(lefile, species, start = c(1,1,1), count = c(n_x, n_y, 24))))
+        var_in <- t(brick(ncvar_get(lefile, variable, start = c(1,1,1), count = c(n_x, n_y, 24))))
       }
       
 
@@ -185,7 +208,7 @@ import_surf_meteo <- function(path = 'output', pattern = "_meteo_", variables = 
       ## flip the domain
       r1 <- flip(var_in, direction = 'y')
       
-      r1_out <- raster::projectRaster(r1_out, output_crs)
+      r1_out <- raster::projectRaster(r1_out, crs = output_crs)
       
       names(r1_out) <- d8_time
       
@@ -197,6 +220,12 @@ import_surf_meteo <- function(path = 'output', pattern = "_meteo_", variables = 
       
       
     }
+  
+  if(write_output == TRUE){
+    
+    
+    
+  }
   
   return(brick(rstz))
 }
