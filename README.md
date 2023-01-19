@@ -135,11 +135,10 @@ any statistical function to be applied. The base functions are ‘mean’,
 sub_domain <- get_country_domain(countries = c('Greece'))
 ```
 
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)
+
 ``` r
 #time_dygraph(concs_dat, variable = c(all_labs[c(3,7,8,9,10)], 'Total'), ylab = spec_df$dg_nam[1])
 
 #p1 <- plot_obs(data_brick = )
 ```
-
-The `echo: false` option disables the printing of code (only output is
-displayed).
