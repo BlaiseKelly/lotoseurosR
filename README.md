@@ -44,83 +44,8 @@ functions.
 table of varient names
 
 ``` r
-conc_rast <- import_surf_concs(species = 'o3', write_out = FALSE)
+#conc_rast <- import_surf_concs(species = 'o3', write_out = FALSE)
 ```
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120701.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120702.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120703.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120704.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120705.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120706.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120707.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120708.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120709.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120710.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120711.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120712.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120713.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120714.nc o3"
-
-    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
-    are the same
-
-    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120715.nc o3"
 
 The plotting function will plot a summary of the period in the raster
 file or the first 64 layers animated. The statistic option allows for
@@ -133,23 +58,6 @@ any statistical function to be applied. The base functions are ‘mean’,
 
 ``` r
 sub_domain <- get_country_domain(countries = c('Greece'))
-```
-
-``` r
-  lon <- mean(st_coordinates(sub_domain)[,1])
-  lat <- mean(st_coordinates(sub_domain)[,2])
-
-m <- leaflet() %>% 
-  addProviderTiles("CartoDB.Positron", group = "CartoDB") %>%
-  setView(lon, lat, zoom = 4)
-
-m <- m %>% addPolygons(data = sub_domain, color = "black", weight = 1,
-                            opacity = 1.0, fillOpacity = 0.9,
-                            fillColor = "yellow")
-
-#m <- m %>% hideGroup(c("kartoblaaden"))
-
-m
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-5-1.png)
