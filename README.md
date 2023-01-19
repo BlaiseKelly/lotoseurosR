@@ -60,6 +60,8 @@ any statistical function to be applied. The base functions are ‘mean’,
 sub_domain <- get_country_domain(countries = c('Greece'))
 ```
 
+    Loading basemap 'light' from map service 'carto'...
+
 ![](README_files/figure-gfm/unnamed-chunk-5-1.png)
 
 ``` r
