@@ -145,6 +145,7 @@ sub_domain <- get_country_domain(countries = c('Greece'))
     Geodetic CRS:  WGS 84
 
 ``` r
+mapviewOptions(fgb = FALSE, georaster = FALSE)
 mapview(sub_domain)
 ```
 
