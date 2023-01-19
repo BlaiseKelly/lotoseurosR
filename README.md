@@ -135,6 +135,23 @@ any statistical function to be applied. The base functions are ‘mean’,
 sub_domain <- get_country_domain(countries = c('Greece'))
 ```
 
+``` r
+  lon <- mean(st_coordinates(sub_domain)[,1])
+  lat <- mean(st_coordinates(sub_domain)[,2])
+
+m <- leaflet() %>% 
+  addProviderTiles("CartoDB.Positron", group = "CartoDB") %>%
+  setView(lon, lat, zoom = 4)
+
+m <- m %>% addPolygons(data = sub_domain, color = "black", weight = 1,
+                            opacity = 1.0, fillOpacity = 0.9,
+                            fillColor = "yellow")
+
+#m <- m %>% hideGroup(c("kartoblaaden"))
+
+m
+```
+
 ![](README_files/figure-gfm/unnamed-chunk-5-1.png)
 
 ``` r
