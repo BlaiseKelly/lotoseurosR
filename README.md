@@ -44,8 +44,83 @@ functions.
 table of varient names
 
 ``` r
-#conc_rast <- import_surf_concs(species = 'o3', write_out = FALSE)
+conc_rast <- import_surf_concs(species = 'o3', write_out = FALSE)
 ```
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120701.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120702.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120703.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120704.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120705.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120706.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120707.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120708.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120709.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120710.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120711.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120712.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120713.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120714.nc o3"
+
+    Warning in raster::projectRaster(r1_out, crs = output_crs): input and ouput crs
+    are the same
+
+    [1] "importing  mod_files/output/LE_v2.2.001_conc-sfc_20120715.nc o3"
 
 The plotting function will plot a summary of the period in the raster
 file or the first 64 layers animated. The statistic option allows for
@@ -63,6 +138,8 @@ sub_domain <- get_country_domain(countries = c('Greece'))
     Loading basemap 'light' from map service 'carto'...
 
 ![](README_files/figure-gfm/unnamed-chunk-5-1.png)
+
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)
 
 ``` r
 #time_dygraph(concs_dat, variable = c(all_labs[c(3,7,8,9,10)], 'Total'), ylab = spec_df$dg_nam[1])
