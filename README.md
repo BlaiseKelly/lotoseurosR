@@ -135,15 +135,6 @@ any statistical function to be applied. The base functions are ‘mean’,
 sub_domain <- get_country_domain(countries = c('Greece'))
 ```
 
-    FALSE Reading layer `world_map' from data source 
-    FALSE   `C:\Users\kellyb\OneDrive - TNO\lotoseurosR\temp\countries\world_map.geojson' 
-    FALSE   using driver `GeoJSON'
-    FALSE Simple feature collection with 256 features and 9 fields
-    FALSE Geometry type: MULTIPOLYGON
-    FALSE Dimension:     XY
-    FALSE Bounding box:  xmin: -180 ymin: -58.49861 xmax: 180 ymax: 83.6236
-    FALSE Geodetic CRS:  WGS 84
-
 ``` r
 #time_dygraph(concs_dat, variable = c(all_labs[c(3,7,8,9,10)], 'Total'), ylab = spec_df$dg_nam[1])
 
