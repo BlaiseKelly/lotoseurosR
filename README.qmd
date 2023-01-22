@@ -1,28 +1,118 @@
 ---
-title: "README"
+title: "Tools for the processing of LOTOS-EUROS outputs"
 format: gfm
 editor: visual
 ---
 
-## lotoseurosR
+## Introduction
 
-Tools to aid inputs and outputs for the LOTOS-EUROS (LE) chemical transport model https://lotos-euros.tno.nl/open-source-version/
+lotoseurosR is a collection of functions to aid the processing of inputs and outputs for the LOTOS-EUROS (LE) chemistry transport model https://lotos-euros.tno.nl/open-source-version/
 
-The model has been downloaded and run on the default settings, with the outputs in the mod_files/outputs folder. Cloning this folder and running the functions should work with the model files. The functions should also work with any LE model ooutput files provided the output files are given distinguishable names that can be given to the pattern input to the function.
+Downloading the model and running with default settings will generate the output in the mod_files/output folder. The examples given in this document are based on these files but should also work with any surface LE model output files.
 
-The input_concs and input_meteo will import the concentration outputs and output as a dataframe that can be used with openair and saqgetr to validate.
+The input_surf_concs and input_surf_meteo will import the concentration or meteo outputs and output as a raster brick that can be plotted or used with openair, worldmet and saqgetr to visualise the data and assist with validation.
 
-By converting to georeferenced raster layers and raster bricks simplifies processing and plotting
+By converting to georeferenced raster layers and raster bricks, the process of extracting time-series, regridding (e.g. to combine with data on different grid systems/resolutions) and plotting is simplified and sped up. Layered image files can also be an efficient file format in terms of read/write speed and disk size, especially compared with dataframes (e.g. csv). It should be noted that saving raster files as other formats (e.g. native .RDS files) might appear to work, but they are linked to the memory. On restarting R they appear to be loaded, but when the RAM is cleared on restart they will be empty).
 
-```{r}
-1 + 1
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+
+library(knitr)
+
+source(file = "functions.R")
+
+kable(varient_df, caption = "table of varient names")
+
 ```
 
-You can add options to executable code like this
+```{r echo=TRUE, message=FALSE, warning = FALSE, error=FALSE}
 
-```{r}
-#| echo: false
-2 * 2
+#mod_rast <- import_surf_concs(species = 'o3', write_out = FALSE)
+
+
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+The plotting function will plot a summary of the period in the raster file or the first 64 layers animated. The statistic option allows for any statistical function to be applied. The base functions are 'mean', 'sum', 'sd'.
+
+```{r}
+
+#p1 <- mod_plot(raster_in = conc_rast, all_layers = TRUE, variable = 'o3', start_hr = 1, end_hr = 30)
+
+
+```
+
+```{r echo=TRUE, warning=FALSE, message=FALSE, comment=FALSE, cache=FALSE, results=FALSE, error=FALSE}
+
+sub_domain <- get_country_domain(countries = c('Greece'))
+
+```
+
+```{r, echo=FALSE, output=TRUE}
+
+buff_dom <- st_buffer(st_transform(sub_domain, 28992), 200000)
+
+bg <- basemaps::basemap_raster(ext=buff_dom, map_service = "carto", map_type = "light")
+
+tm_shape(bg)+
+    tm_rgb()+
+    tm_shape(sub_domain) +
+    tm_polygons(col = 'yellow', alpha = 0.5)
+
+#   lon <- mean(st_coordinates(sub_domain)[,1])
+#   lat <- mean(st_coordinates(sub_domain)[,2])
+# 
+# m <- leaflet() %>% 
+#   addProviderTiles("CartoDB.Positron", group = "CartoDB") %>%
+#   setView(lon, lat, zoom = 4) %>% 
+#   addPolygons(data = sub_domain, color = "black", weight = 1,
+#                             opacity = 1.0, fillOpacity = 0.6,
+#                             fillColor = "yellow")
+
+
+```
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, comment=FALSE, cache=FALSE, error=FALSE}
+
+obs_sites <- find_aq_sites(raster_list = mod_rast, domain = sub_domain, type_def = c('background'), area_def = c('urban', 'rural', 'suburban'), species = c('o3'))
+
+plot_obs(sites_sf = obs_sites, variable = 'o3')
+
+mod_obs <- mod_obs_combine(raster_list = mod_rast, sites_sf = obs_sites)
+
+s_mo <- slice(mod_obs, 1:15)
+
+library(knitr)
+
+kable(s_mo, caption = "snapshot of modelled and observed concentrations")
+
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, comment=FALSE, cache=FALSE, error=FALSE}
+
+ms_sites <- modStats(mod_obs, obs = "obs", mod = "mod",
+         type = c("site"))
+
+ms_all <- modStats(mod_obs, obs = "obs", mod = "mod")
+
+```
+
+Model statistics for all observation locations
+
+```{r}
+
+kable(ms_all, caption = "model statistics for all ")
+
+#time_dygraph(concs_dat, variable = c(all_labs[c(3,7,8,9,10)], 'Total'), ylab = spec_df$dg_nam[1])
+
+#p1 <- plot_obs(data_brick = )
+
+```
+
+Model statistics split by site
+
+```{r}
+
+kable(ms_sites, caption = "model statistics split by site")
+
+
+```
