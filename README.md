@@ -115,9 +115,15 @@ sub_domain <- get_country_domain(countries = c('Greece'))
 
 snapshot of modelled and observed concentrations
 
-![](plots/rmd/sp1.png)
+Now that the modelled and observed values have been joined together in a
+data frame it is easy to use some Openair functions to plot the data.
+Below are some examples.
 
-![](plots/rmd/sp2.png) ![](plots/rmd/tv.png)
+![scatterplot showing modelled and observed
+concentrations](plots/rmd/sp1.png)
+
+![density scatterplot](plots/rmd/sp2.png) ![time variation
+plot](plots/rmd/tv.png)
 
 Model statistics for all observation locations
 
@@ -157,3 +163,16 @@ kable(ms_sites, caption = "model statistics split by site")
 | gr0120a | 360 | 0.9972222 |  17.772900 | 27.11035 |  0.1724253 |  0.2630134 | 34.66519 | 0.7524655 | -1.3114925 | -0.1347582 |
 
 model statistics split by site
+
+If desired all species can be output from the model and plot using the
+CorPlot. Also for the same location.
+
+Meteo data can be imported in the same way and also plot as a sequental
+hourly plot. Below is a plot of temperature for the full domain.
+
+In the example files wind speed and direction are also output.
+
+![time variation plot](plots/rmd/ws_wd_plot.gif)
+
+Wind speed and direction code adapted from this post
+https://stackoverflow.com/questions/47880918/how-to-plot-wind-direction-with-lat-lon-and-arrow-in-ggplot2
