@@ -20,6 +20,7 @@ library(pals)
 library(tmap)
 library(exactextractr)
 library(threadr)
+library(rmweather)
 
 select <- dplyr::select
 
@@ -32,13 +33,13 @@ varient_df <- data.frame(le_specs = c("o3", "no2", "no", "nh3", "so2", 'hno3', "
                          dg_nam = c("O<sub>3</sub> (&mu;g/m<sup>3</sup>)", "NO<sub>2</sub> (&mu;g/m<sup>3</sup>)", "NO (&mu;g/m<sup>3</sup>)","NH<sub>3</sub> (&mu;g/m<sup>3</sup>)",
                                     "SO<sub>2</sub> (&mu;g/m<sup>3</sup>)", "HNO<sub>3</sub> (&mu;g/m<sup>3</sup>)", "CO (&mu;g/m<sup>3</sup>)", "PM<sub>10</sub> (&mu;g/m<sup>3</sup>)", "PM<sub>2.5</sub> (&mu;g/m<sup>3</sup>)"))
 
-import_surf_concs <- function(path = 'mod_files/output', pattern = "_conc-sfc_", write_out = TRUE, species,  output_crs = 4326, output_units = 'mass'){
+import_surf_concs <- function(path = 'files/output', pattern = "_conc-sfc_", write_out = TRUE, species,  output_crs = 4326, output_units = 'mass'){
   # 
-  # path <- "files/output"
-  # pattern = "_conc-sfc_"
-  # species <- c('o3', 'no2')
-  # output_units <- 'mass'
-  # output_crs = 4326
+  path <- "files/output"
+  pattern = "_conc-sfc_"
+  species <- c('o3', 'no2')
+  output_units <- 'mass'
+  output_crs = 4326
   
   files_p <- list.files(path, pattern, full.names = TRUE)
   files <- files_p[!grepl('metout', files_p)] ## metout files are generated as part of defualt model run
@@ -128,7 +129,7 @@ import_surf_concs <- function(path = 'mod_files/output', pattern = "_conc-sfc_",
 meteo_spec <- c('temper', 'wspd_surf', 'wdir_surf')
                          
 
-import_surf_meteo <- function(path = 'mod_files/output', pattern = "_meteo_", variable = 'temper', write_out = FALSE,  output_crs = 4326){
+import_surf_meteo <- function(path = 'files/output', pattern = "_meteo_", variable = 'temper',  output_crs = 4326){
   
   #path <- "output"
   #pattern = "_meteo_"
@@ -210,87 +211,14 @@ import_surf_meteo <- function(path = 'mod_files/output', pattern = "_meteo_", va
       
     }
   
-  if(write_out == TRUE){
-    
-    dir.create('bricks/meteo', recursive = TRUE)
-    ## convert to a terra geospatial raster and use terra writeRaster function to preserve layer names
-    terra::writeRaster(terra::rast(brick(rstz)), filename=paste0("bricks/meteo/", variable, ".TIF"), overwrite = TRUE)
-    
-    #assign(s, s_rast)
-    
-    print(paste0("raster brick written to: bricks/meteo/", variable, ".TIF"))
-  }
   
   return(brick(rstz))
+  
 }
 
 
-# 
-# plot_obs <- function{data_brick, variable}{
-#   
-#   ## set palette for site types
-#   pal_g <- colorFactor("Set3", reverse = FALSE, domain = site_sums_sf$site_type)
-#   
-#   ##plot on a map
-#   
-#   for (c in cats){
-#     
-#     ## tryCatch({
-#     cat <- get(c)
-#     
-#     ## create base base
-#     m <- leaflet() %>% 
-#       setView(lon, lat, zoom = 6) %>% 
-#       addProviderTiles('CartoDB.Positron')
-#     
-#     ## find unique variables
-#     variable_u <- unique(cat$variable_long)
-#     
-#     ## find how many variable colours are needed
-#     n <- NROW(variable_u)
-#     ## generate a palette of for all variables
-#     palette <- distinctColorPalette(n)
-#     
-#     ## loop through the variables to generate ability to toggle between species
-#     for (u in variable_u){
-#       
-#       p <- palette[which(variable_u == u)]
-#       
-#       df <- filter(cat, variable_long == u)
-#       
-#       m <- m %>% addCircleMarkers(data = df, fillColor = ~pal_g(site_type), color = 'black', weight = 1,
-#                                   opacity = 1.0, fillOpacity = 1.0,
-#                                   popup = paste("site code:", df$site, "<br>",
-#                                                 "site name:", df$site_name, "<br>",
-#                                                 "site type:", df$site_type, "<br>",
-#                                                 "date start:", df$date_start.y, "<br>",
-#                                                 "date end:", df$date_end.y, "<br>",
-#                                                 "data source:", df$data_source.y, "<br>",
-#                                                 "sampling process:", df$sampling_process, "<br>",
-#                                                 "sampling process:", df$sampling_point, "<br>",
-#                                                 "observation count:", df$observation_count.y, "<br>",
-#                                                 "sampling period:", df$period, "<br>"), group = u)
-#       
-#     }
-#     
-#     m <- m %>% addLegend("bottomleft", pal=pal_g, values=site_sums_sf$site_type, opacity=1, title = "site type",
-#                          group = "site type")
-#     
-#     m <- m %>% addLayersControl(baseGroups = c(variable_u),
-#                                 options = layersControlOptions(collapsed = FALSE))
-#     
-#     n <- sprintf('%02d', which(cats == c))
-#     
-#     ## use html widget saveWidget function to make a standalone html
-#     withr::with_dir('./', saveWidget(m, file = paste0(n, "_", c, ".html")))  
-#     
-#     ## error catch in case one group gets an error
-#     ##  }, error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
-#   }
-#   
-# }
-
-
+## function to find the boundary box for most countries in the world. Type the name of the country in the function (not case sensitive) and it should return a shapefile
+## which is converted to a boundary box and output as either an sf polygon or a boundary box
 get_country_domain <- function(countries = c('Slovenia', 'Greece'), return_format = 'sf'){
 
 dir.create("temp/countries", recursive = TRUE)
@@ -401,12 +329,13 @@ find_noaa_sites <- function(sites, start_date, end_date){
 }
 
 
-
-ws_wd_plot <- function(ws_rast = NA, wd_rast = NA, start_hr = 1, end_hr = 4){
+## wind speed and direction plotted as an animated gif
+## code adapted from this post https://stackoverflow.com/questions/47880918/how-to-plot-wind-direction-with-lat-lon-and-arrow-in-ggplot2
+ws_wd_plot <- function(ws_rast = NA, wd_rast = NA, file_path = 'plots/meteo/', height = 1600, width = 1200, fps = 2, start_hr = 1, end_hr = 4){
 
   
-   # ws_rast <- crop(subset(ws_rast,start_hr:end_hr),domain)
-    #wd_rast <- crop(subset(wd_rast,start_hr:end_hr), domain)
+   ws_rast <- subset(ws_rast,start_hr:end_hr)
+   wd_rast <- subset(wd_rast,start_hr:end_hr)
     
     ws_dat <- data.frame(rasterToPoints(ws_rast)) %>% 
       melt(c('x', 'y')) %>% 
@@ -446,12 +375,14 @@ g1 <- ggplot(ws_wd_dis,
   labs(title = "Period: {current_frame}")
 
 # animate in a two step process:
-animate(g1, height = 1600, width =1200, fps = 2, nframes = framez)
+animate(g1, height, width, fps, nframes = framez)
+dir.create(file_path, recursive = TRUE)
+anim_save(paste0(file_path, "ws_wd_plot.gif"))
 
 }
 
-
-u_v_plot <- function(u_rast = NA, v_rast = NA, domain, start_hr = 1, end_hr = 4){
+## plot same but using the u and v values. This allows the data to be disaggregated (i.e. improved interpolated)
+u_v_plot <- function(u_rast = NA, v_rast = NA, dfact = 5, domain, start_hr = 1, end_hr = 4){
   
   
   if(is.na(ws_rast)){
@@ -459,6 +390,9 @@ u_v_plot <- function(u_rast = NA, v_rast = NA, domain, start_hr = 1, end_hr = 4)
     windDir <-function(u,v){
       (270-atan2(u,v)*180/pi)%%360 
     }
+    
+    u_rast <- disaggregate(u_rast, fact = dfact, method = 'bilinear')
+    v_rast <- disaggregate(v_rast, fact = dfact, method = 'bilinear')
     
     ra_ws = sqrt(u_rast^2 + v_rast^2)
     ra_wd = windDir(u = u_rast, v = v_rast)
@@ -633,7 +567,7 @@ meteo_plot <- function(raster_in, all_layers = TRUE, statistic = 'mean', variabl
 }
 
 
-mod_plot <- function(raster_list, statistic = 'mean', variable = 'o3'){
+mod_plot <- function(raster_list, file_path = 'plots/concs/', statistic = 'mean', variable = 'o3'){
 
   for (s in species){
   
@@ -668,8 +602,8 @@ mod_plot <- function(raster_list, statistic = 'mean', variable = 'o3'){
       tm_legend(position = c("left", "top"))+
       tm_facets(nrow = 1, ncol = 1)
 
-    dir.create("plots/concs", recursive = TRUE)
-    tmap_animation(tm_1, filename = paste0("plots/concs/", s, "_",
+    dir.create(file_path, recursive = TRUE)
+    tmap_animation(tm_1, filename = paste0(file_path, s, "_",
                                            gsub(" ", "_", str_sub(d8s[1], 1,-7)), "_", gsub(" ", "_", str_sub(d8s[NROW(d8s)], 1,-7)), ".gif"), delay = 60)
     
   }
@@ -730,6 +664,41 @@ find_aq_sites <- function(raster_list, type_def = 'background', area_def = c('ur
   all_sf <- do.call(rbind, all_sites_sf)
   
   return(all_sf)
+  
+}
+
+## pick out data from modelled data only
+mod_site <- function(raster_list, sites_sf, species){
+  
+  
+  mod_obs_spec <- list()
+  for (s in species){
+    
+    rstr_in <- brick(raster_list[grepl(s, names(raster_list))])
+    
+    df <- data.frame(t(extract(rstr_in, sites_sf)))
+    
+    names(df) <- sites_sf$site
+    
+    rast_d8s <- as.character(gsub("\\.", "_", gsub("X", "", row.names(df))))
+    
+    dat <- data.frame(date = rast_d8s, df)
+    
+    dat_species <- dat %>% 
+      melt(c('date')) %>% 
+      select(date, site = 'variable', mod = value) %>% 
+      mutate(date = ymd_hm(date),
+             species = s)
+    
+    mod_obs_spec[[s]] <- dat_species
+    
+    print(s)
+    
+  }
+  
+  all_mod_obs <- do.call(rbind, mod_obs_spec)
+  
+  return(all_mod_obs)
   
 }
 
@@ -852,7 +821,7 @@ mod_obs_combine <- function(raster_list, sites_sf, species){
   
 }
 
-rm_obs <- function(trees = 300, samples = 300, species, variables = c("wd", "ws", "air_temp", "RH", "date_unix", "day_julian", "weekday", "hour"))
+rm_obs <- function(trees = 300, samples = 300, species, variables = c("wd", "ws", "air_temp", "RH", "date_unix", "day_julian", "weekday", "hour")){
 
 
 # Met normalisation
@@ -894,174 +863,4 @@ png(filename, width=20000, height=18000, units="px", res=1400)
 print(p9)
 dev.off()
 
-
-# 
-# import_surf_ALL <- function(path = 'mod_files/output', conc_pattern = "_conc-sfc_", meteo_pattern = "" write_out = TRUE, species,  output_crs = 4326, output_units = 'mass'){
-#   
-#   # path <- "mod_files/output"
-#   # pattern = "_conc-sfc_"
-#   # species <- 'o3'
-#   # output_units <- 'mass'
-#   # output_crs = 4326
-#   
-#   files_p <- list.files(path, pattern, full.names = TRUE)
-#   files <- files_p[!grepl('metout', files_p)] ## metout files are generated as part of defualt model run
-#   files <- files[grepl('.nc', files)]
-#   ## open one file to get species
-#   lefile <- nc_open(files[1])
-#   
-#   longitude <- ncvar_get(lefile, "longitude")
-#   latitude <- ncvar_get(lefile, "latitude")
-#   lon_res <- (longitude[2]-longitude[1])/2
-#   lat_res <- (latitude[2]-latitude[1])/2
-#   ##create min x and y
-#   x_min <- min(longitude)-lon_res
-#   x_max <- max(longitude)+lon_res
-#   y_min <- min(latitude)-lat_res
-#   y_max <- max(latitude)+lat_res
-#   ##determine number of lat and lon points
-#   n_y <- NROW(latitude)
-#   n_x <- NROW(longitude)
-#   
-#   ##work out number of x and y cells
-#   
-#   ##create a data frame to setup polygon generation
-#   df <- data.frame(X = c(x_min, x_max, x_max, x_min),
-#                    Y = c(y_max, y_max, y_min, y_min))
-#   
-#   ##generate a polygon of the area
-#   vgt_area <- df %>%
-#     st_as_sf(coords = c("X", "Y"), crs = 4326) %>%
-#     dplyr::summarise(data = st_combine(geometry)) %>%
-#     st_cast("POLYGON")
-#   
-#   nc_close(lefile)
-#   rstz <- list()
-#   for (f in files){
-#     
-#     lefile <- nc_open(f)
-#     
-#     TIME <- ncvar_get(lefile, "time", start = c(1), count = c(1))
-#     
-#     time_since <- str_sub(lefile$dim$time$units, 15, -14)
-#     
-#     d8_time <- paste0((lubridate::ymd(time_since) + lubridate::seconds(TIME)), " ", sprintf("%02d", seq(1:24)-1), ":00")
-#     d8 <- lubridate::ymd(lubridate::ymd(time_since) + lubridate::seconds(TIME))
-#     ## import variable, convert to brick and transpose
-#     var_in <- t(brick(ncvar_get(lefile, species, start = c(1,1,1,1), count = c(n_x, n_y, 1,24))))
-#     
-#     ##define the crs
-#     crs(var_in) <- 4326
-#     ## define the extent
-#     bb <- extent(vgt_area)
-#     extent(var_in) <- bb
-#     ## flip the domain
-#     r1 <- flip(var_in, direction = 'y')
-#     
-#     if(output_units == 'mass'){
-#       r1_out <- r1*10^9
-#     }
-#     if(output_units == 'volume'){
-#       r1_out <- r1*var_info$units
-#     }
-#     
-#     r1_out <- raster::projectRaster(r1_out, crs = output_crs)
-#     
-#     names(r1_out) <- d8_time
-#     
-#     nam_out <- as.character(d8)
-#     
-#     rstz[[nam_out]] <- r1_out
-#     
-#     print(paste('importing ', f, species))
-#     
-#     
-#   }
-#   
-#   conc_rast <- brick(rstz)
-#   
-#   #path <- "output"
-#   #pattern = "_meteo_"
-#   
-#   files_p <- list.files(path, pattern, full.names = TRUE)
-#   files <- files_p[!grepl('metout', files_p)] ## metout files are generated as part of defualt model run
-#   files <- files[grepl('.nc', files)]
-#   ## open one file to get species
-#   lefile <- nc_open(files[1])
-#   
-#   longitude <- ncvar_get(lefile, "longitude")
-#   latitude <- ncvar_get(lefile, "latitude")
-#   lon_res <- (longitude[2]-longitude[1])/2
-#   lat_res <- (latitude[2]-latitude[1])/2
-#   ##create min x and y
-#   x_min <- min(longitude)-lon_res
-#   x_max <- max(longitude)+lon_res
-#   y_min <- min(latitude)-lat_res
-#   y_max <- max(latitude)+lat_res
-#   ##determine number of lat and lon points
-#   n_y <- NROW(latitude)
-#   n_x <- NROW(longitude)
-#   
-#   ##work out number of x and y cells
-#   
-#   ##create a data frame to setup polygon generation
-#   df <- data.frame(X = c(x_min, x_max, x_max, x_min),
-#                    Y = c(y_max, y_max, y_min, y_min))
-#   
-#   ##generate a polygon of the area
-#   vgt_area <- df %>%
-#     st_as_sf(coords = c("X", "Y"), crs = 4326) %>%
-#     dplyr::summarise(data = st_combine(geometry)) %>%
-#     st_cast("POLYGON")
-#   
-#   nc_close(lefile)
-#   rstz <- list()
-#   for (f in files){
-#     
-#     lefile <- nc_open(f)
-#     
-#     TIME <- ncvar_get(lefile, "time", start = c(1), count = c(1))
-#     
-#     time_since <- str_sub(lefile$dim$time$units, 15, -14)
-#     
-#     d8_time <- paste0((lubridate::ymd(time_since) + lubridate::seconds(TIME)), " ", sprintf("%02d", seq(1:24)-1), ":00")
-#     d8 <- lubridate::ymd(lubridate::ymd(time_since) + lubridate::seconds(TIME))
-#     
-#     var_dim <- NROW(dim(ncvar_get(lefile, variable)))
-#     
-#     lefile$var$wdir_surf$ndims
-#     if(var_dim == 4){
-#       var_in <- t(brick(ncvar_get(lefile, variable, start = c(1,1,1,1), count = c(n_x, n_y, 1, 24))))
-#     }
-#     
-#     if(var_dim == 3){
-#       var_in <- t(brick(ncvar_get(lefile, variable, start = c(1,1,1), count = c(n_x, n_y, 24))))
-#     }
-#     
-#     
-#     ##define the crs
-#     crs(var_in) <- 4326
-#     ## define the extent
-#     bb <- extent(vgt_area)
-#     extent(var_in) <- bb
-#     ## flip the domain
-#     r1 <- flip(var_in, direction = 'y')
-#     
-#     r1_out <- raster::projectRaster(r1, crs = output_crs)
-#     
-#     names(r1_out) <- d8_time
-#     
-#     nam_out <- as.character(d8)
-#     
-#     rstz[[nam_out]] <- r1_out
-#     
-#     print(paste('importing ', f, variable))
-#     
-#     
-#   }
-#   
-#   
-#   
-# }
-# 
-# 
+}
