@@ -81,9 +81,7 @@ file or the first 64 layers animated. The statistic option allows for
 any statistical function to be applied. The base functions are ‘mean’,
 ‘sum’, ‘sd’.
 
-``` r
-#p1 <- mod_plot(raster_in = conc_rast, all_layers = TRUE, variable = 'o3', start_hr = 1, end_hr = 30)
-```
+![](plots/rmd/o3_2012-07-01_00_2012-07-15_23.gif)
 
 ``` r
 sub_domain <- get_country_domain(countries = c('Greece'))
@@ -91,11 +89,11 @@ sub_domain <- get_country_domain(countries = c('Greece'))
 
     Loading basemap 'light' from map service 'carto'...
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)
 
     FALSE [1] "all o3 sites imported between 2012-07-01 & 2012-07-15 23:00:00"
 
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)
 
     FALSE [1] "o3"
 
