@@ -26,19 +26,14 @@ kable(varient_df, caption = "table of varient names")
 
 ```{r echo=TRUE, message=FALSE, warning = FALSE, error=FALSE}
 
-#mod_rast <- import_surf_concs(species = 'o3', write_out = FALSE)
+mod_rast <- import_surf_concs(species = c('o3','no2'), path = 'files/output', output_units = 'volume')
 
 
 ```
 
 The plotting function will plot a summary of the period in the raster file or the first 64 layers animated. The statistic option allows for any statistical function to be applied. The base functions are 'mean', 'sum', 'sd'.
 
-```{r}
-
-#p1 <- mod_plot(raster_in = conc_rast, all_layers = TRUE, variable = 'o3', start_hr = 1, end_hr = 30)
-
-
-```
+![](plots/rmd/o3_2012-07-01_00_2012-07-15_23.gif)
 
 ```{r echo=TRUE, warning=FALSE, message=FALSE, comment=FALSE, cache=FALSE, results=FALSE, error=FALSE}
 
@@ -77,7 +72,7 @@ obs_sites <- find_aq_sites(raster_list = mod_rast, domain = sub_domain, type_def
 
 plot_obs(sites_sf = obs_sites, variable = 'o3')
 
-mod_obs <- mod_obs_combine(raster_list = mod_rast, sites_sf = obs_sites)
+mod_obs <- mod_obs_combine(raster_list = mod_rast, sites_sf = obs_sites, species = 'o3')
 
 s_mo <- slice(mod_obs, 1:15)
 
