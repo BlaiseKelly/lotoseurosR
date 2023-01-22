@@ -87,13 +87,11 @@ any statistical function to be applied. The base functions are ‘mean’,
 sub_domain <- get_country_domain(countries = c('Greece'))
 ```
 
-    Loading basemap 'light' from map service 'carto'...
-
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)
+![](plots/rmd/tm1.png)
 
     FALSE [1] "all o3 sites imported between 2012-07-01 & 2012-07-15 23:00:00"
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)
 
     FALSE [1] "o3"
 
@@ -116,6 +114,10 @@ sub_domain <- get_country_domain(countries = c('Greece'))
 | o3.15 | 2012-07-01 14:00:00 | gr0027a | 114.27141 | 108.5625 | o3      |
 
 snapshot of modelled and observed concentrations
+
+![](plots/rmd/sp1.png)
+
+![](plots/rmd/sp2.png) ![](plots/rmd/tv.png)
 
 Model statistics for all observation locations
 
