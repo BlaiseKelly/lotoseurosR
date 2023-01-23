@@ -211,5 +211,11 @@ In the example files wind speed and direction are also output.
 
 ![time variation plot](plots/rmd/ws_wd_plot.gif)
 
-Wind speed and direction code adapted from this post
+Wind speed and direction code has been adapted from the code in this
+post
 https://stackoverflow.com/questions/47880918/how-to-plot-wind-direction-with-lat-lon-and-arrow-in-ggplot2
+
+The code in this repository has been shared to give some pointers on
+methods for dealing with the output data from LE. The author of this
+work accepts no responsibility for the code and any outputs that are
+generated.
