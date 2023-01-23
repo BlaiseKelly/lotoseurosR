@@ -217,5 +217,5 @@ https://stackoverflow.com/questions/47880918/how-to-plot-wind-direction-with-lat
 
 The code in this repository has been shared to give some pointers on
 methods for dealing with the output data from LE. The author of this
-work accepts no responsibility for the code and any outputs that are
-generated.
+work accepts no responsibility for the code and any associated outputs
+that are generated.
